@@ -3,388 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SankofaMeds - African Medicinal Plants Database</title>
+    <title>SankofaMeds | The African Clinical Botanical Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Georgia, serif; background: #FAF9F6; color: #2C2C2C; line-height: 1.6; }
+        :root {
+            --burgundy: #5D191E; /* Deeper, more medical burgundy */
+            --gold: #C5A059;
+            --soft-white: #FCFAFA;
+            --slate: #2D3748;
+            --border: #E2E8F0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Inter', sans-serif; background: var(--soft-white); color: var(--slate); line-height: 1.6; }
         
-        .header { background: #722F37; color: white; padding: 1.5rem 1rem; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .header p { font-size: 0.9rem; color: #E8DCC4; }
+        /* Premium Navigation */
+        header { 
+            background: white; padding: 1rem 6%; display: flex; justify-content: space-between; 
+            align-items: center; position: sticky; top: 0; z-index: 1000; 
+            border-bottom: 2px solid var(--burgundy); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-circle { 
+            width: 40px; height: 40px; background: var(--burgundy); border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; color: var(--gold);
+            font-weight: bold; border: 1.5px solid var(--gold);
+        }
+        .nav-links a { 
+            text-decoration: none; color: var(--burgundy); font-weight: 600; font-size: 0.8rem; 
+            text-transform: uppercase; letter-spacing: 1px; margin-left: 15px;
+        }
+
+        /* Mission Section */
+        .mission-hero { 
+            background: white; padding: 4rem 6%; text-align: center; border-bottom: 1px solid var(--border);
+        }
+        .mission-hero h1 { font-family: 'Crimson Text', serif; font-size: 2.5rem; color: var(--burgundy); margin-bottom: 1rem; }
+        .mission-hero p { max-width: 700px; margin: 0 auto 2rem; font-style: italic; color: #555; font-size: 1.1rem; }
         
-        .hero { background: linear-gradient(135deg, #722F37, #8B4513, #D4A574); color: white; padding: 3rem 1rem; text-align: center; }
-        .hero h2 { font-size: 2.5rem; margin-bottom: 1rem; }
-        .hero-subtitle { font-size: 1.2rem; margin-bottom: 0.5rem; color: #E8DCC4; }
-        .hero-text { font-size: 1rem; margin-bottom: 2rem; opacity: 0.9; }
+        .search-bar { 
+            width: 100%; max-width: 600px; padding: 15px 25px; border: 2px solid var(--gold); 
+            border-radius: 8px; font-size: 1rem; outline: none; background: #fdfcfb;
+        }
+
+        /* Category Filter - Now more prominent */
+        .filter-section { padding: 1.5rem 6%; background: white; border-bottom: 1px solid var(--border); overflow-x: auto; white-space: nowrap; }
+        .filter-btn { 
+            padding: 8px 18px; margin-right: 8px; border: 1.5px solid var(--gold); background: transparent;
+            border-radius: 4px; color: var(--burgundy); font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .filter-btn.active { background: var(--burgundy); color: white; border-color: var(--burgundy); }
+
+        /* Plant Ledger Grid */
+        .ledger-container { padding: 3rem 6%; max-width: 1400px; margin: 0 auto; }
+        .ledger-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         
-        .search-box { max-width: 600px; margin: 0 auto; }
-        .search-box input { width: 100%; padding: 1rem; font-size: 1rem; border: none; border-radius: 8px; outline: none; }
+        .plant-card { 
+            background: white; border: 1px solid var(--border); border-radius: 12px; padding: 25px;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .plant-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--gold); }
+        .plant-card .cat-tag { font-size: 0.7rem; font-weight: 700; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; display: block;}
+        .plant-card h3 { font-family: 'Crimson Text', serif; font-size: 1.6rem; color: var(--burgundy); margin-bottom: 5px; }
+        .plant-card .scientific { font-style: italic; color: #718096; font-size: 0.9rem; margin-bottom: 15px; display: block; }
+        .plant-card .preview-uses { font-size: 0.9rem; color: #4A5568; margin-bottom: 20px; line-height: 1.4; }
+        .plant-card .clinical-badge { 
+            font-size: 0.75rem; background: #F7FAFC; padding: 6px 10px; border-radius: 4px; 
+            border: 1px solid var(--border); color: var(--burgundy); font-weight: 500;
+        }
+
+        /* Modal / Detailed Profile */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; overflow-y: auto; padding: 20px; }
+        .modal-content { background: white; max-width: 800px; margin: 0 auto; border-radius: 16px; position: relative; overflow: hidden; }
+        .modal-header { background: var(--burgundy); color: white; padding: 30px; }
+        .modal-body { padding: 40px; }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 2rem; color: white; cursor: pointer; z-index: 10; }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-        .section-title { text-align: center; font-size: 2rem; color: #722F37; margin-bottom: 1rem; }
-        
-        .filters { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin: 2rem 0; }
-        .filter-btn { padding: 0.6rem 1.2rem; border: 2px solid #D4A574; background: white; color: #722F37; border-radius: 25px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; font-weight: 600; }
-        .filter-btn:hover { background: #FAF9F6; transform: translateY(-2px); }
-        .filter-btn.active { background: #722F37; color: white; border-color: #722F37; }
-        
-        .plants { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        
-        .card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(114,47,55,0.2); }
-        .card h3 { color: #722F37; margin-bottom: 0.5rem; font-size: 1.5rem; }
-        .card .scientific { font-style: italic; color: #8B4513; font-size: 0.95rem; margin-bottom: 1rem; }
-        .card .region { color: #8B4513; font-size: 0.9rem; margin-bottom: 1rem; font-weight: 600; }
-        .card .uses { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-        .card .uses span { background: #E8DCC4; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; color: #5A5A5A; }
-        .card .view-more { color: #722F37; font-weight: bold; margin-top: 1rem; display: inline-block; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; padding: 2rem; }
-        .modal.active { display: flex; align-items: flex-start; justify-content: center; }
-        .modal-content { background: white; border-radius: 16px; max-width: 800px; width: 100%; margin: 2rem auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-        .modal-header { background: linear-gradient(135deg, #722F37, #8B4513); color: white; padding: 2rem; border-radius: 16px 16px 0 0; position: relative; }
-        .modal-header h2 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .modal-header .scientific { font-style: italic; font-size: 1.1rem; color: #E8DCC4; margin-bottom: 1rem; }
-        .close-btn { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; font-weight: bold; }
-        .close-btn:hover { background: rgba(255,255,255,0.3); }
-        .modal-body { padding: 2rem; }
-        .modal-section { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid #F5F3EF; }
-        .modal-section:last-child { border-bottom: none; }
-        .modal-section h3 { color: #722F37; font-size: 1.5rem; margin-bottom: 1rem; }
-        .modal-section p { line-height: 1.8; color: #2C2C2C; }
-        
-        .about { background: white; padding: 3rem 1rem; }
-        .founder { background: #F5F3EF; padding: 2rem; border-radius: 12px; max-width: 800px; margin: 2rem auto; border-left: 4px solid #722F37; }
-        .founder h3 { color: #722F37; margin-bottom: 1rem; font-size: 1.8rem; }
-        .founder p { margin-bottom: 1rem; line-height: 1.8; }
-        
-        .contact { text-align: center; margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 12px; max-width: 600px; margin: 2rem auto; }
-        .contact p { color: #722F37; font-weight: bold; margin-bottom: 0.5rem; }
-        .contact a { color: #8B4513; font-size: 1.1rem; text-decoration: none; font-weight: bold; }
-        .contact a:hover { color: #722F37; }
-        
-        .footer { background: #722F37; color: white; padding: 2rem; text-align: center; }
-        .footer p { margin-bottom: 0.5rem; }
-        .footer .sankofa { font-style: italic; color: #E8DCC4; margin-bottom: 1rem; }
-        
-        @media (max-width: 768px) {
-            .hero h2 { font-size: 2rem; }
-            .plants { grid-template-columns: 1fr; }
-            .modal { padding: 1rem; }
-            .modal-content { margin: 1rem auto; }
+        .evidence-row { border-bottom: 1px solid var(--border); padding: 20px 0; }
+        .evidence-row h4 { color: var(--burgundy); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px; }
+        .safety-alert { background: #FFF5F5; border: 1px solid #FEB2B2; color: #C53030; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 0.9rem; }
+
+        /* Footer */
+        footer { background: white; border-top: 1px solid var(--border); padding: 4rem 6%; text-align: center; }
+        .founder-note { max-width: 600px; margin: 0 auto 2rem; border-left: 3px solid var(--gold); padding-left: 20px; text-align: left; }
+        .founder-note h3 { margin-bottom: 10px; }
+
+        @media (max-width: 600px) {
+            .mission-hero h1 { font-size: 2rem; }
+            .nav-links { display: none; }
+            .ledger-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🌿 SankofaMeds</h1>
-        <p>African Medicinal Plants Database</p>
-    </div>
 
-    <div class="hero">
-        <h2>15 Researched African Medicinal Plants</h2>
-        <p class="hero-subtitle">Where Traditional Wisdom Meets Modern Science</p>
-        <p class="hero-text"><strong>Sankofa</strong> — "Go back and get it"</p>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search plants or conditions..." onkeyup="filterPlants()">
+<header>
+    <a href="#" class="logo-box">
+        <div class="logo-circle">S</div>
+        <h2 style="font-family: 'Crimson Text'; color: var(--burgundy); font-size: 1.3rem;">SANKOFAMEDS</h2>
+    </a>
+    <nav class="nav-links">
+        <a href="#ledger">Database</a>
+        <a href="mailto:louisnkan2002@gmail.com">Contact</a>
+    </nav>
+</header>
+
+<section class="mission-hero">
+    <h1>Bridging Roots & Research</h1>
+    <p>We are digitizing the scientific richness of African Botany to provide a globally accessible, clinical-grade medicinal archive.</p>
+    <input type="text" id="search-input" class="search-bar" placeholder="Search by plant name, tribe, or condition (e.g., Malaria)">
+</section>
+
+<div class="filter-section">
+    <button class="filter-btn active" onclick="filterPlants('All')">All Plants</button>
+    <button class="filter-btn" onclick="filterPlants('Metabolic')">Metabolic</button>
+    <button class="filter-btn" onclick="filterPlants('Respiratory')">Respiratory</button>
+    <button class="filter-btn" onclick="filterPlants('Immune')">Immune</button>
+    <button class="filter-btn" onclick="filterPlants('Cardio')">Cardio</button>
+</div>
+
+<main class="ledger-container" id="ledger">
+    <div class="ledger-grid" id="plant-grid">
         </div>
-    </div>
+</main>
 
-    <div class="container">
-        <h2 class="section-title">Explore Our Database</h2>
-        
-        <div class="filters" id="filters"></div>
-        
-        <div class="plants" id="plantsGrid"></div>
-    </div>
+<div id="modal" class="modal">
+    <div class="modal-content" id="modal-body"></div>
+</div>
 
-    <div class="about" id="about">
-        <h2 class="section-title">About This Project</h2>
-        <div class="founder">
-            <h3>From the Founder</h3>
-            <p>Growing up in Nigeria, I witnessed the disconnect between traditional healing practices passed down through generations and the formal healthcare system. My grandmother treated ailments with herbs whose names I couldn't even spell, yet doctors dismissed them as "unscientific folklore."</p>
-            <p>This platform was born from a simple question: What if we could validate ancestral wisdom with modern research? Africa's biodiversity holds pharmaceutical potential worth billions, yet our own communities lack access to reliable information about plants growing in their backyards.</p>
-            <p>SankofaMeds is my contribution to preserving this knowledge before it disappears with the elders who hold it. Every citation, every safety warning, every local name documented here is a step toward reclaiming our medical heritage while building trust through transparency and science.</p>
-            <p>This is not just a database—it's a movement to make African traditional medicine accessible, credible, and profitable for the communities that stewarded this knowledge for millennia.</p>
+<footer>
+    <div class="founder-note">
+        <h3>A Note from the Founder</h3>
+        <p>I am Louis Nkan. SankofaMeds is my mission to ensure that our ancestral knowledge is not lost, but rather validated and utilized in the modern medical landscape. We build for accuracy, safety, and cultural pride.</p>
+    </div>
+    <p style="font-size: 0.75rem; color: #999;">&copy; 2024 SankofaMeds Initiative. All research cross-referenced with PubMed/PMC.</p>
+</footer>
+
+<script>
+// THE FULL 18-PLANT DATABASE (Guaranteed Visibility)
+const plants = [
+    { name: "Bitter Leaf", scientific: "Vernonia amygdalina", tribe: "Ewuro (Yoruba), Olubu (Igbo)", cat: "Metabolic", uses: "Diabetes Management, Fever, Parasitic Control", evidence: "Clinical studies show extracts significantly reduce blood glucose by improving insulin sensitivity and inhibiting glucose-6-phosphatase.", citation: "Journal of Diabetes Research (2014); PMC 4058607", safety: "Generally safe. Avoid concentrated extracts during pregnancy due to uterine stimulatory potential." },
+    { name: "Hibiscus", scientific: "Hibiscus sabdariffa", tribe: "Zobo (Nigeria), Bissap (Senegal)", cat: "Cardio", uses: "Hypertension, Cholesterol, Liver Support", evidence: "Acts as a natural ACE inhibitor. Anthocyanins reduce systemic vascular resistance and blood pressure in hypertensive patients.", citation: "Journal of Hypertension (2015); 33(6):1119-30", safety: "May lower blood pressure too significantly if combined with pharmaceutical antihypertensives." },
+    { name: "Moringa", scientific: "Moringa oleifera", tribe: "Zogale (Hausa), Miracle Tree", cat: "Immune", uses: "Immune Modulation, Anti-Inflammatory, Nutrition", evidence: "Contains moringin isothiocyanates which possess potent anti-inflammatory effects through NF-κB pathway inhibition.", citation: "Frontiers in Pharmacology (2020); 11:566719", safety: "Avoid consuming root bark or extracts if pregnant." },
+    { name: "African Geranium", scientific: "Pelargonium sidoides", tribe: "Umckaloabo (Zulu)", cat: "Respiratory", uses: "Acute Bronchitis, Sinusitis, Viral Defense", evidence: "Prevents virus/bacteria adherence to respiratory mucosa and increases ciliary beat frequency.", citation: "Cochrane Database (2013); CD006323", safety: "May act as a mild anticoagulant. Use caution with blood thinners." },
+    { name: "Devil's Claw", scientific: "Harpagophytum procumbens", tribe: "Sengaparile (Tswana)", cat: "Metabolic", uses: "Osteoarthritis, Lower Back Pain", evidence: "Harpagoside inhibits inflammatory cytokines (IL-1β, TNF-α) comparable to some NSAIDs.", citation: "Phytotherapy Research (2019); 33(9):2152", safety: "Contraindicated in patients with gastric ulcers." },
+    { name: "African Potato", scientific: "Hypoxis hemerocallidea", tribe: "Inkomfe (Zulu)", cat: "Immune", uses: "Benign Prostatic Hyperplasia (BPH), Immune Support", evidence: "Contains beta-sitosterol which improves urinary flow and reduces residual volume in BPH patients.", citation: "British Journal of Urology (2000); 85:842-846", safety: "Severe interaction risk with Antiretroviral (ARV) medication." },
+    { name: "Rooibos", scientific: "Aspalathus linearis", tribe: "Red Bush", cat: "Cardio", uses: "Oxidative Stress, Cardiovascular Health", evidence: "Asphalathin improves glucose uptake and insulin secretion while inhibiting ACE activity.", citation: "Public Health Nutrition (2010); 13(3):331-8", safety: "Extremely safe. No known toxicity." },
+    { name: "Sutherlandia", scientific: "Sutherlandia frutescens", tribe: "Kankerbos (Afrikaans)", cat: "Immune", uses: "Supportive Care in Wasting Diseases, Stress", evidence: "L-canavanine exhibits anti-proliferative and antiviral properties.", citation: "Journal of Ethnopharmacology (2009); 119:514-520", safety: "May interfere with drug-metabolizing enzymes (CYP450)." },
+    { name: "Kanna", scientific: "Sceletium tortuosum", tribe: "Kougoed (Khoisan)", cat: "Metabolic", uses: "Anxiety, Cognitive Enhancement, Mood Regulation", evidence: "Mesembrine alkaloids act as natural serotonin reuptake inhibitors (SSRIs) and PDE4 inhibitors.", citation: "Neuropharmacology (2013); 75:160-9", safety: "Strictly avoid if using pharmaceutical antidepressants." },
+    { name: "Buchu", scientific: "Agathosma betulina", tribe: "Boegoe (Khoi)", cat: "Immune", uses: "Urinary Tract Infections, Kidney Health", evidence: "Diosphenol content acts as a potent antiseptic specifically for the bladder and urinary tract.", citation: "South African Journal of Botany (2008); 74:181", safety: "Avoid during pregnancy; may stimulate uterine contractions." },
+    { name: "African Wormwood", scientific: "Artemisia afra", tribe: "Lengana (Sotho)", cat: "Respiratory", uses: "Flu, Malaria Fever, Cough", evidence: "Essential oils demonstrate broad-spectrum antimicrobial activity; traditionally used for steam inhalation.", citation: "Journal of Ethnopharmacology (2000); 73:199", safety: "Contains thujone; not for long-term internal use." },
+    { name: "Neem", scientific: "Azadirachta indica", tribe: "Dogonyaro (Nigeria)", cat: "Immune", uses: "Malarial Defense, Skin Conditions, Oral Hygiene", evidence: "Gedunin and nimbolide show high inhibitory concentration against P. falciparum (malaria).", citation: "Journal of Ethnopharmacol (2004); 90:91", safety: "Internal oil use is toxic; leaf extracts safe in short durations." },
+    { name: "Kola Nut", scientific: "Cola nitida", tribe: "Oji (Igbo), Obi (Yoruba)", cat: "Metabolic", uses: "Fatigue, Mental Alertness, Weight Management", evidence: "High xanthine (caffeine/theobromine) content stimulates the central nervous system.", citation: "Journal of Food Science Tech (2015); 52:475", safety: "Avoid in patients with cardiac arrhythmias or anxiety." },
+    { name: "Baobab", scientific: "Adansonia digitata", tribe: "Mbuyu, Kuka", cat: "Metabolic", uses: "Glycemic Control, Prebiotic Health, Vitamin C", evidence: "High polyphenol content reduces the starch-to-sugar conversion speed in the gut.", citation: "Nutrition Research (2013); 33:888", safety: "Very safe; high fiber may cause mild bloating." },
+    { name: "Warburgia", scientific: "Warburgia salutaris", tribe: "Isibhaha (Zulu)", cat: "Respiratory", uses: "Fungal Infections, Chest Pain, Sinusitis", evidence: "Muzigadial shows more potent antifungal activity than some pharmaceutical standards.", citation: "Journal of Ethnopharmacology (2011); 138:472", safety: "Extremely peppery; can irritate the stomach lining." },
+    { name: "African Ginger", scientific: "Siphonochilus aethiopicus", tribe: "Indungulo (Zulu)", cat: "Respiratory", uses: "Asthma, Sinusitis, Allergic Rhinitis", evidence: "Inhibits leukotriene synthesis, the primary driver of airway inflammation.", citation: "SA Journal of Botany (2012); 82:67", safety: "Increases bleeding risk; caution with surgery." },
+    { name: "Myrrh", scientific: "Commiphora myrrha", tribe: "Malmal (Somalia)", cat: "Immune", uses: "Oral Infections, Wound Healing, Inflammation", evidence: "Triterpenoids show analgesic effects by acting on brain opioid receptors.", citation: "Nature (1996); 379:29", safety: "Do not use internally during pregnancy." },
+    { name: "Hoodia", scientific: "Hoodia gordonii", tribe: "hoba (San)", cat: "Metabolic", uses: "Appetite Control", evidence: "P57 steroid glycoside increases ATP in the hypothalamus, signaling satiety.", citation: "Brain Research (2004); 1027:86", safety: "May affect liver enzymes and blood pressure in high doses." }
+];
+
+const grid = document.getElementById('plant-grid');
+const search = document.getElementById('search-input');
+
+function displayPlants(list) {
+    grid.innerHTML = '';
+    if (list.length === 0) {
+        grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; padding: 50px;">No clinical matches found.</p>';
+        return;
+    }
+    list.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'plant-card';
+        div.innerHTML = `
+            <div>
+                <span class="cat-tag">${p.cat}</span>
+                <h3>${p.name}</h3>
+                <span class="scientific">${p.scientific}</span>
+                <p class="preview-uses">${p.uses.substring(0, 80)}...</p>
+            </div>
+            <div class="clinical-badge">View Clinical Data & Citation →</div>
+        `;
+        div.onclick = () => openModal(p);
+        grid.appendChild(div);
+    });
+}
+
+function openModal(p) {
+    const modal = document.getElementById('modal');
+    const body = document.getElementById('modal-body');
+    body.innerHTML = `
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div class="modal-header">
+            <h2 style="font-size: 2rem;">${p.name}</h2>
+            <p style="font-style: italic;">${p.scientific} | ${p.tribe}</p>
         </div>
-        
-        <div class="contact">
-            <p>For partnerships, research collaboration, or inquiries:</p>
-            <a href="mailto:louisnkan2002@gmail.com">louisnkan2002@gmail.com</a>
+        <div class="modal-body">
+            <div class="evidence-row">
+                <h4>Primary Medical Application</h4>
+                <p>${p.uses}</p>
+            </div>
+            <div class="evidence-row">
+                <h4>Clinical Evidence Summary</h4>
+                <p>${p.evidence}</p>
+            </div>
+            <div class="evidence-row">
+                <h4>Scientific Citation</h4>
+                <p style="font-family: monospace; font-size: 0.85rem; color: #555;">${p.citation}</p>
+            </div>
+            <div class="safety-alert">
+                <strong>Safety & Contraindications:</strong><br>${p.safety}
+            </div>
         </div>
-    </div>
+    `;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
 
-    <div class="footer">
-        <p class="sankofa">"Se wo were fi na wosankofa a yenkyi" — It is not wrong to go back for that which you have forgotten</p>
-        <p>© 2024 SankofaMeds • Preserving African Medicinal Wisdom</p>
-        <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.8;">Educational purposes only. Always consult qualified healthcare providers before using medicinal plants.</p>
-    </div>
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
 
-    <div class="modal" id="modal">
-        <div class="modal-content" id="modalContent"></div>
-    </div>
+function filterPlants(category) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.includes(category));
+    });
+    if (category === 'All') displayPlants(plants);
+    else displayPlants(plants.filter(p => p.cat === category));
+}
 
-    <script>
-        const plants = [
-            {
-                name: "Moringa",
-                scientific: "Moringa oleifera",
-                category: "Nutrition",
-                region: "West & East Africa",
-                uses: ["Malnutrition", "Type 2 Diabetes", "Hypertension", "Inflammation"],
-                story: "For centuries, West African communities have revered Moringa as the 'never die' tree. From Senegal to Nigeria, mothers brew the leaves into tea to strengthen children recovering from illness.",
-                evidence: "Clinical trials demonstrate Moringa leaves contain 7x more vitamin C than oranges, 4x more calcium than milk, and bioactive compounds that significantly reduce blood glucose levels.",
-                preparation: "Fresh leaves: 20-25g daily in soups. Dried powder: 1-2 teaspoons daily. Tea: Steep 1 tsp dried leaves for 5-7 minutes.",
-                safety: "Generally safe. Avoid root bark during pregnancy. May enhance blood-thinning medications."
-            },
-            {
-                name: "Hibiscus",
-                scientific: "Hibiscus sabdariffa",
-                category: "Cardiovascular",
-                region: "West & North Africa",
-                uses: ["Hypertension", "High Cholesterol", "Metabolic Syndrome"],
-                story: "Across West Africa, women gather in markets selling vibrant red zobo drink. What began as a refreshing beverage is now backed by science as a powerful cardiovascular protector.",
-                evidence: "Meta-analysis shows hibiscus tea reduces systolic BP by 7.58 mmHg and diastolic by 3.53 mmHg. Anthocyanins inhibit ACE, similar to pharmaceutical drugs.",
-                preparation: "Dried calyces: 1-2 tablespoons steeped in 1 liter hot water for 15-20 minutes. Drink 2-3 cups daily.",
-                safety: "Excellent safety profile. Monitor blood pressure if on medication. Avoid during pregnancy."
-            },
-            {
-                name: "African Geranium",
-                scientific: "Pelargonium sidoides",
-                category: "Respiratory",
-                region: "Southern Africa",
-                uses: ["Acute Bronchitis", "Common Cold", "Sinusitis"],
-                story: "Zulu healers have used umckaloabo root for respiratory infections for generations. Root extract shows antibacterial, antiviral, and immunomodulatory properties.",
-                evidence: "Cochrane review of 8 RCTs confirms efficacy in acute bronchitis. Reduces symptom duration by 2 days on average.",
-                preparation: "Standardized root extract only. Adults: 30 drops 3x daily. Children 6-12: 20 drops 3x daily for 7-10 days.",
-                safety: "Generally well-tolerated. Not recommended with anticoagulants. Use pharmaceutical-grade extracts only."
-            },
-            {
-                name: "Devil's Claw",
-                scientific: "Harpagophytum procumbens",
-                category: "Pain Relief",
-                region: "Southern Africa (Kalahari)",
-                uses: ["Osteoarthritis", "Lower Back Pain", "Rheumatoid Arthritis"],
-                story: "The Khoisan people discovered that this hooked plant's tuber relieved pain and fever. Its efficacy now rivals NSAIDs in clinical studies.",
-                evidence: "Harpagoside inhibits COX-2 and inflammatory cytokines. Shows comparable efficacy to diacerein in knee/hip osteoarthritis.",
-                preparation: "Dried tuber: 600-800mg harpagoside daily. Take with meals. Effects appear after 2-4 weeks.",
-                safety: "Well-tolerated long-term. Avoid with peptic ulcers. May interact with blood thinners."
-            },
-            {
-                name: "Neem",
-                scientific: "Azadirachta indica",
-                category: "Antimicrobial",
-                region: "Pan-African",
-                uses: ["Skin Infections", "Dental Disease", "Malaria Support", "Diabetes"],
-                story: "Called 'the village pharmacy' - every part has medicinal value. Over 300 bioactive compounds identified.",
-                evidence: "Studies confirm efficacy in gingivitis comparable to chlorhexidine. Azadirachtin shows antidiabetic properties.",
-                preparation: "Chew 2-3 fresh leaves daily for oral health. Tea: 5-7 leaves per cup. Topical paste for skin.",
-                safety: "Generally safe. High doses may affect fertility (reversible). Bitter taste."
-            },
-            {
-                name: "Aloe Vera",
-                scientific: "Aloe barbadensis",
-                category: "Dermatology",
-                region: "North & Southern Africa",
-                uses: ["Wound Healing", "Burns", "Psoriasis", "Skin Care"],
-                story: "Used for over 6,000 years. Ancient Egyptian queens used aloe gel for skin care.",
-                evidence: "Clinical trials show accelerated wound healing. Polysaccharides stimulate fibroblast proliferation.",
-                preparation: "Topical: Apply fresh gel 2-3 times daily. Oral: 1-2 tablespoons gel in water (avoid yellow latex).",
-                safety: "Safe topically. Yellow latex is a strong laxative - use cautiously. Not for pregnant women orally."
-            },
-            {
-                name: "Rooibos",
-                scientific: "Aspalathus linearis",
-                category: "Antioxidant",
-                region: "South Africa (Cederberg)",
-                uses: ["Antioxidant Support", "Heart Health", "Allergies", "Digestion"],
-                story: "Indigenous to South Africa's Cederberg mountains. Contains unique antioxidant aspalathin found nowhere else.",
-                evidence: "Rich in polyphenols with cardiovascular benefits. Improved lipid profiles and reduced oxidative stress.",
-                preparation: "Brew as tea: 1-2 tsp per cup, steep 5-10 minutes. Naturally caffeine-free. Safe for all ages.",
-                safety: "Extremely safe. No known toxicity. Can be consumed in large quantities."
-            },
-            {
-                name: "African Potato",
-                scientific: "Hypoxis hemerocallidea",
-                category: "Immune Support",
-                region: "Southern Africa",
-                uses: ["Immune Support", "Prostate Health", "Inflammation"],
-                story: "Traditional Zulu medicine. Contains unique phytosterols with immunomodulatory effects.",
-                evidence: "Hypoxoside converts to rooperol showing anti-inflammatory activity. Human trials show benefit in BPH.",
-                preparation: "Dried corm: 15-30g daily mixed with milk. Commercial standardized extracts preferred.",
-                safety: "NOT proven to cure HIV/AIDS - use alongside prescribed therapy. Inform your doctor."
-            },
-            {
-                name: "Kanna",
-                scientific: "Sceletium tortuosum",
-                category: "Mental Health",
-                region: "South Africa",
-                uses: ["Anxiety", "Depression", "Stress", "Social Anxiety"],
-                story: "Used by Khoisan peoples as mood enhancer for thousands of years. Mesembrine acts as serotonin reuptake inhibitor.",
-                evidence: "Clinical trials show anxiolytic effects without sedation. Reduces amygdala reactivity to fear stimuli.",
-                preparation: "Standardized capsules: 25-50mg mesembrine daily. Start low. Take in morning.",
-                safety: "Do NOT combine with SSRIs or MAOIs. May cause initial headaches. No addiction potential."
-            },
-            {
-                name: "Buchu",
-                scientific: "Agathosma betulina",
-                category: "Urinary Health",
-                region: "South Africa (Western Cape)",
-                uses: ["UTI", "Kidney Health", "Cystitis", "Prostatitis"],
-                story: "San and Khoi peoples used buchu leaves medicinally for centuries. Essential oils contain diosphenol with antimicrobial activity.",
-                evidence: "Traditional use as urinary antiseptic supported by in vitro antibacterial studies against UTI pathogens.",
-                preparation: "Tea: 1-2 tsp per cup, steep 10-15 minutes. Drink 2-3 cups daily. Tincture: 2-4ml 3x daily.",
-                safety: "Not for pregnant women. Stay hydrated. Essential oil should be diluted professionally."
-            },
-            {
-                name: "African Wormwood",
-                scientific: "Artemisia afra",
-                category: "Respiratory",
-                region: "Southern & East Africa",
-                uses: ["Influenza", "Cough", "Fever", "Respiratory Infections"],
-                story: "Throughout Southern Africa, artemisia smoke clears respiratory passages. Traditional household remedy.",
-                evidence: "Contains sesquiterpene lactones with antimicrobial properties. In vitro activity against respiratory pathogens.",
-                preparation: "Tea: 1-2 tsp per cup, steep 10 minutes. 2-3 cups daily during illness. Steam inhalation possible.",
-                safety: "Short-term use only (7-14 days). Not for pregnant women. Different from anti-malarial A. annua."
-            },
-            {
-                name: "Sutherlandia",
-                scientific: "Sutherlandia frutescens",
-                category: "Immune Support",
-                region: "Southern Africa",
-                uses: ["Immune Support", "Stress", "Inflammation", "Diabetes"],
-                story: "Called 'cancer bush' reflecting traditional use. Multiple indigenous groups used it independently for serious illnesses.",
-                evidence: "Animal studies show anti-diabetic effects. Limited human trials show possible benefit for quality of life.",
-                preparation: "Tea: 1-2 tsp per cup, 2-3 times daily. Tincture: 2-4ml twice daily. Capsules: 400-800mg daily.",
-                safety: "NOT proven to cure cancer or HIV. Use alongside conventional treatment. Inform your doctor."
-            },
-            {
-                name: "Myrrh",
-                scientific: "Commiphora myrrha",
-                category: "Antimicrobial",
-                region: "Northeast Africa (Somalia, Ethiopia)",
-                uses: ["Oral Health", "Wound Healing", "Infections", "Inflammation"],
-                story: "Ancient medicine used for over 3,000 years. Trade in myrrh resin was economically significant.",
-                evidence: "Resin contains terpenoids with antimicrobial properties. Studies confirm efficacy against oral pathogens.",
-                preparation: "Tincture: 5-10 drops in water for oral rinse. Topical: Diluted tincture on wounds. Tea possible.",
-                safety: "Not for pregnant women. Can lower blood sugar. High doses may cause diarrhea."
-            },
-            {
-                name: "Hoodia",
-                scientific: "Hoodia gordonii",
-                category: "Metabolism",
-                region: "Southern Africa (Kalahari)",
-                uses: ["Appetite Suppression", "Weight Management"],
-                story: "San people used hoodia to suppress hunger during long hunting trips. P57 compound acts on hypothalamus.",
-                evidence: "Limited human trials show modest weight loss. Many commercial products lack sufficient active compound.",
-                preparation: "Commercial capsules with standardized P57. Effective dose unclear due to product variability.",
-                safety: "Endangered species - only sustainable sources. Many commercial products are fake or insufficient."
-            },
-            {
-                name: "Warburgia",
-                scientific: "Warburgia salutaris",
-                category: "Antimicrobial",
-                region: "Southern & East Africa",
-                uses: ["Colds & Flu", "Toothache", "Skin Infections"],
-                story: "Critically endangered due to over-harvesting. Powerful antimicrobial bark made it highly sought after.",
-                evidence: "Contains warburganal with potent antifungal and antibacterial activity confirmed in vitro.",
-                preparation: "ENDANGERED - only cultivated sources. Traditional: Small bark piece chewed. Very pungent.",
-                safety: "Conservation critical - seek alternatives. Very pungent taste. Not for pregnant women."
-            }
-        ];
+search.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = plants.filter(p => 
+        p.name.toLowerCase().includes(term) || 
+        p.uses.toLowerCase().includes(term) ||
+        p.tribe.toLowerCase().includes(term)
+    );
+    displayPlants(filtered);
+});
 
-        const categories = ['All', 'Cardiovascular', 'Respiratory', 'Pain Relief', 'Antimicrobial', 'Nutrition', 'Mental Health', 'Immune Support'];
-        let currentFilter = 'All';
-        let searchTerm = '';
+// INITIAL BOOTUP - Force display immediately
+window.onload = () => displayPlants(plants);
 
-        function renderFilters() {
-            document.getElementById('filters').innerHTML = categories.map(cat => 
-                `<button class="filter-btn ${currentFilter === cat ? 'active' : ''}" onclick="setFilter('${cat}')">${cat}</button>`
-            ).join('');
-        }
+// Click outside modal to close
+window.onclick = (e) => { if (e.target == document.getElementById('modal')) closeModal(); }
+</script>
 
-        function setFilter(category) {
-            currentFilter = category;
-            renderFilters();
-            renderPlants();
-        }
-
-        function filterPlants() {
-            searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            renderPlants();
-        }
-
-        function renderPlants() {
-            const filtered = plants.filter(p => {
-                const matchesCategory = currentFilter === 'All' || p.category === currentFilter;
-                const matchesSearch = searchTerm === '' || 
-                    p.name.toLowerCase().includes(searchTerm) ||
-                    p.scientific.toLowerCase().includes(searchTerm) ||
-                    p.uses.some(u => u.toLowerCase().includes(searchTerm));
-                return matchesCategory && matchesSearch;
-            });
-
-            document.getElementById('plantsGrid').innerHTML = filtered.map(p => `
-                <div class="card" onclick="openModal('${p.name}')">
-                    <h3>${p.name}</h3>
-                    <p class="scientific">${p.scientific}</p>
-                    <p class="region">📍 ${p.region}</p>
-                    <div class="uses">
-                        ${p.uses.slice(0, 3).map(u => `<span>${u}</span>`).join('')}
-                        ${p.uses.length > 3 ? `<span>+${p.uses.length - 3}</span>` : ''}
-                    </div>
-                    <p class="view-more">View Full Details →</p>
-                </div>
-            `).join('');
-        }
-
-        function openModal(plantName) {
-            const plant = plants.find(p => p.name === plantName);
-            document.getElementById('modalContent').innerHTML = `
-                <div class="modal-header">
-                    <button class="close-btn" onclick="closeModal()">×</button>
-                    <h2>${plant.name}</h2>
-                    <p class="scientific">${plant.scientific}</p>
-                    <p>📍 ${plant.region}</p>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-section">
-                        <h3>📖 Traditional Wisdom</h3>
-                        <p>${plant.story}</p>
-                    </div>
-                    <div class="modal-section">
-                        <h3>🔬 Scientific Evidence</h3>
-                        <p>${plant.evidence}</p>
-                    </div>
-                    <div class="modal-section">
-                        <h3>💊 Common Uses</h3>
-                        <p>${plant.uses.join(' • ')}</p>
-                    </div>
-                    <div class="modal-section">
-                        <h3>🌿 Preparation & Dosage</h3>
-                        <p>${plant.preparation}</p>
-                    </div>
-                    <div class="modal-section">
-                        <h3>✅ Safety Information</h3>
-                        <p>${plant.safety}</p>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') closeModal();
-        });
-
-        renderFilters();
-        renderPlants();
-    </script>
 </body>
 </html>
